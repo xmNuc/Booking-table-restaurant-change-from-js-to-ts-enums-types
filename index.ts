@@ -1,5 +1,8 @@
 import { Restaurant } from './restaurant';
-import { RestaurantEventName } from './types/restaurant-events';
+import {
+  RestaurantEventName,
+  RestaurantTableChangeEventCallback,
+} from './types/restaurant-events';
 
 const megaRestaurant = new Restaurant();
 let tablesCount = 25;
@@ -11,9 +14,9 @@ megaRestaurant
   .on(RestaurantEventName.Close, () => {
     console.log('Restaurant is closed');
   })
-  .on(RestaurantEventName.Update, (count) => {
+  .on(RestaurantEventName.Update, ((count) => {
     (tablesCount += count), console.log('Numbers of tables', tablesCount);
-  });
+  }) as RestaurantTableChangeEventCallback);
 
 megaRestaurant.open(); // "Restaurant is open."
 

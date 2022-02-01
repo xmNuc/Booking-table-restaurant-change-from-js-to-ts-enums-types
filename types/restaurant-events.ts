@@ -9,3 +9,4 @@ export type RestaurantTableChangeEvent = (
   eventName: RestaurantEventName.Update,
   incDec: number
 ) => boolean;
+export type RestaurantTableChangeEventCallback = (incDec: number) => void;
