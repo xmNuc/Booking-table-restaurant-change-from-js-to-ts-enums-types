@@ -1,27 +1,37 @@
 import { EventEmitter } from 'events';
-import { RestaurantEventName } from './types/restaurant-events';
+import {
+  RestaurantEvent,
+  RestaurantEventName,
+  RestaurantTableChangeEvent,
+} from './types/restaurant-events';
 
 export class Restaurant extends EventEmitter {
   /**
    * Open restaurant.
    */
   open() {
-    this.emit(RestaurantEventName.Open);
+    (this.emit as RestaurantEvent)(RestaurantEventName.Open);
   }
 
   /**
    * Close restaurant.
    */
   close() {
-    this.emit(RestaurantEventName.Close);
+    (this.emit as RestaurantEvent)(RestaurantEventName.Close);
   }
 
+  private changeTableCount(incDec: number) {
+    (this.emit as RestaurantTableChangeEvent)(
+      RestaurantEventName.Update,
+      incDec
+    );
+  }
   /**
    *A table has been reserved for now.
    * Treat it as just 1 table less.
    */
   reserveTable() {
-    this.emit(RestaurantEventName.Update, -1);
+    this.changeTableCount(-1);
   }
 
   /**
@@ -29,27 +39,27 @@ export class Restaurant extends EventEmitter {
    * Treat it as just 1 more table.
    */
   cancelTableReservation() {
-    this.emit(RestaurantEventName.Update, 1);
+    this.changeTableCount(1);
   }
 
   /**
    * Someone took a table without reservation.
    */
   takeTableWithoutReservation() {
-    this.emit(RestaurantEventName.Update, -1);
+    this.changeTableCount(-1);
   }
 
   /**
    * The table broke, the leg fell off: /
    */
   markTableAsBroken() {
-    this.emit(RestaurantEventName.Update, -1);
+    this.changeTableCount(-1);
   }
 
   /**
    * Someone has finished eating, we clean the table and it's back to use.
    */
   cleanupTable() {
-    this.emit(RestaurantEventName.Update, 1);
+    this.changeTableCount(1);
   }
 }
